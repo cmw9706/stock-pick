@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -15,20 +16,34 @@ func main() {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
-	go trackSymbol("MSFT")
-	go trackSymbol("AAPL")
+	changeChannel := make(chan ChangeMetadata)
+
+	go listenForPriceChanges(changeChannel)
+	go trackSymbol("AAPL", changeChannel)
 
 	wg.Wait()
 }
 
-//Tracking price for a given symbol
-func trackSymbol(symbol string) {
+func convertFloatToFormattedString(input float64) string {
+	return strconv.FormatFloat(input, 'f', 2, 32)
+}
+
+func listenForPriceChanges(change chan ChangeMetadata) {
 	for {
-		quotesEndpoint := "https://api.robinhood.com/marketdata/quotes/?symbols=" + symbol
+		select {
+		case delta := <-change:
+			fmt.Println(delta.Symbol, " has changed from ", delta.OldPrice, " to ", delta.NewPrice, " => ", convertFloatToFormattedString(delta.Delta), "Original price: ", convertFloatToFormattedString(delta.OriginalPrice))
+		}
+	}
+}
 
-		//Todo: ping oauth endpoint for token, find way to get
-		var bearer = "Bearer " + "{ENTER YOUR TOKEN HERE}"
-
+//Tracking price for a given symbol
+func trackSymbol(symbol string, change chan ChangeMetadata) {
+	quotesEndpoint := "https://api.robinhood.com/marketdata/quotes/?symbols=" + symbol
+	var bearer = "Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NjY2NTg0NDEsInRva2VuIjoicXRkOTNGbEJ3VUVPMThkWWNtVHFrdlpHcWxGZHZXIiwidXNlcl9pZCI6ImFkNTk3OTFiLWZkMTAtNDJiOS1hYmI2LWQ4Mzc1MWEwZjI1YiIsIm9wdGlvbnMiOmZhbHNlLCJsZXZlbDJfYWNjZXNzIjpmYWxzZX0.eV6FSBjxp-dGr_vIp-jdegU52nGzYSyZecukpkeEXxCMyyvt_YynAjCbUDvGoxKRmfopiUH5ZO3zq-xUXqLbcW9oGPPP4YpmCxoyH1ZjTTtsXvdO8eyi96KKMrIRM1aKBt40-YT2JJD82qMT1-imIinCUpdrnZpsZ3uoXftGDpiMQ6u7webi3gqlx5IqVIer7XpidYoQaUwEUdGOe7cHKgBgKjzVuZQnC_0X2zGvRo8oezwOqZ6oJAv_AF0KXwLtHTEuwEXd76KhuyugaEmCVNKmcjMXySAA-QeJU-HAsABFCH0t8JjB1na3fE0AS5LktIwdd9cRd7HMlczWffw7Bg"
+	oldPrice := 0.0
+	orignalPrice := 0.0
+	for {
 		req, error := http.NewRequest("GET", quotesEndpoint, nil)
 
 		if error == nil {
@@ -42,7 +57,32 @@ func trackSymbol(symbol string) {
 			results := ResultsWrapper{}
 			json.Unmarshal([]byte(body), &results)
 			result := results.Results[0]
-			fmt.Println(symbol, "Ask Price is", result.AskPrice)
+			newPrice, parseErr := strconv.ParseFloat(result.AskPrice, 32)
+
+			if parseErr != nil {
+				fmt.Errorf("failed to parse ask price")
+			}
+
+			if newPrice != oldPrice {
+				delta := newPrice - oldPrice
+				changeInfo := ChangeMetadata{
+					Symbol:        symbol,
+					NewPrice:      convertFloatToFormattedString(newPrice),
+					OldPrice:      convertFloatToFormattedString(oldPrice),
+					Delta:         delta,
+					OriginalPrice: orignalPrice,
+				}
+
+				change <- changeInfo
+			}
+
+			if oldPrice == 0.0 {
+				orignalPrice = newPrice
+			}
+
+			oldPrice = newPrice
+
+			//fmt.Println(symbol, "Ask Price is", result.AskPrice)
 		}
 	}
 }
@@ -66,4 +106,13 @@ type ResultsWrapper struct {
 		UpdatedAt                   time.Time `json:"updated_at"`
 		Instrument                  string    `json:"instrument"`
 	} `json:"results"`
+}
+
+//ChangeMetadata model
+type ChangeMetadata struct {
+	Delta         float64
+	OriginalPrice float64
+	Symbol        string
+	NewPrice      string
+	OldPrice      string
 }
