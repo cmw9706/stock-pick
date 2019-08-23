@@ -40,7 +40,7 @@ func listenForPriceChanges(change chan ChangeMetadata) {
 //Tracking price for a given symbol
 func trackSymbol(symbol string, change chan ChangeMetadata) {
 	quotesEndpoint := "https://api.robinhood.com/marketdata/quotes/?symbols=" + symbol
-	var bearer = "Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NjY2NTg0NDEsInRva2VuIjoicXRkOTNGbEJ3VUVPMThkWWNtVHFrdlpHcWxGZHZXIiwidXNlcl9pZCI6ImFkNTk3OTFiLWZkMTAtNDJiOS1hYmI2LWQ4Mzc1MWEwZjI1YiIsIm9wdGlvbnMiOmZhbHNlLCJsZXZlbDJfYWNjZXNzIjpmYWxzZX0.eV6FSBjxp-dGr_vIp-jdegU52nGzYSyZecukpkeEXxCMyyvt_YynAjCbUDvGoxKRmfopiUH5ZO3zq-xUXqLbcW9oGPPP4YpmCxoyH1ZjTTtsXvdO8eyi96KKMrIRM1aKBt40-YT2JJD82qMT1-imIinCUpdrnZpsZ3uoXftGDpiMQ6u7webi3gqlx5IqVIer7XpidYoQaUwEUdGOe7cHKgBgKjzVuZQnC_0X2zGvRo8oezwOqZ6oJAv_AF0KXwLtHTEuwEXd76KhuyugaEmCVNKmcjMXySAA-QeJU-HAsABFCH0t8JjB1na3fE0AS5LktIwdd9cRd7HMlczWffw7Bg"
+	var bearer = "Bearer " + ""
 	oldPrice := 0.0
 	orignalPrice := 0.0
 	for {
