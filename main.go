@@ -7,15 +7,19 @@ import (
 	"log"
 	"net/http"
 	"stock-pick/listeners"
+	"stock-pick/readers"
 	"strconv"
 	"time"
 )
 
 func main() {
 
-	listener, err := listeners.NewListener()
-	if err != nil {
-		panic(err)
+	activityChannel := make(chan string)
+
+	StartListeners(activityChannel)
+
+	for message := range activityChannel {
+		fmt.Println(message)
 	}
 
 	//Todo: pull top 100 movers and track these symbols concurrently
@@ -28,6 +32,34 @@ func main() {
 	// go trackSymbol("AAPL", changeChannel)
 
 	// wg.Wait()
+}
+
+//StartListeners gets all the symbols and creates listeners for them
+func StartListeners(activityChannel chan string) {
+	reader, error := readers.NewReader(readers.InMemory)
+
+	if error != nil {
+		log.Fatal("Failure to create symbol reader")
+	}
+
+	symbols, error := reader.GetSymbols()
+
+	if error != nil {
+		log.Fatal("Failure to retrieve symbols")
+	}
+
+	for _, symbol := range symbols {
+		listener, err := listeners.NewListener()
+		if err != nil {
+			panic(err)
+		}
+		go listener.ListenToSymbol(symbol, activityChannel)
+	}
+
+	// listener, err := listeners.NewListener()
+	// if err != nil {
+	// 	panic(err)
+	// }
 }
 
 func convertFloatToFormattedString(input float64) string {
