@@ -6,22 +6,28 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"stock-pick/listeners"
 	"strconv"
-	"sync"
 	"time"
 )
 
 func main() {
+
+	listener, err := listeners.NewListener()
+	if err != nil {
+		panic(err)
+	}
+
 	//Todo: pull top 100 movers and track these symbols concurrently
-	var wg sync.WaitGroup
-	wg.Add(2)
+	// var wg sync.WaitGroup
+	// wg.Add(2)
 
-	changeChannel := make(chan ChangeMetadata)
+	// changeChannel := make(chan ChangeMetadata)
 
-	go listenForPriceChanges(changeChannel)
-	go trackSymbol("AAPL", changeChannel)
+	// go listenForPriceChanges(changeChannel)
+	// go trackSymbol("AAPL", changeChannel)
 
-	wg.Wait()
+	// wg.Wait()
 }
 
 func convertFloatToFormattedString(input float64) string {
