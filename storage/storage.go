@@ -7,5 +7,7 @@ type Storage interface {
 	GetTransactions() ([]models.Transaction, error)
 	GetTransaction(models.Transaction) (models.Transaction, error)
 	SaveTransaction(models.Transaction) error
+	SaveStock(models.Stock) error
+	RemoveStock(models.Stock) error
 	GetOwnedStock() ([]models.Stock, error)
 }

@@ -39,6 +39,7 @@ func (rb *RobinhoodBroker) BuyStock(stockToBuy models.Stock) error {
 		}
 
 		storage.DB.SaveTransaction(newTransaction)
+		storage.DB.SaveStock(stockToBuy)
 	}()
 
 	return nil
@@ -71,6 +72,7 @@ func (rb *RobinhoodBroker) SellStock(stockToSell models.Stock) error {
 		}
 
 		storage.DB.SaveTransaction(newTransaction)
+		storage.DB.RemoveStock(stockToSell)
 	}()
 
 	return nil

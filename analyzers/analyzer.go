@@ -30,6 +30,7 @@ func stockIsOwned(stock models.Stock) (bool, error) {
 	owned := false
 	ownedStock, error := storage.DB.GetOwnedStock()
 	if error != nil {
+		fmt.Println("ERROR!")
 		return owned, error
 	}
 
@@ -46,7 +47,7 @@ func evaluateToSell(symbolToSell models.Stock) {
 	//Do some evaluation
 	number := rand.Intn(100)
 
-	if number > 83 {
+	if number > 50 {
 		fmt.Println("Selling")
 
 		broker, error := brokers.NewBroker()
