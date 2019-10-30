@@ -22,7 +22,7 @@ func (l *RobinhoodListener) ListenToSymbol(symbol string, activityChannel chan s
 	fmt.Println("Listening to ", symbol, "...")
 
 	quotesEndpoint := "https://api.robinhood.com/marketdata/quotes/?symbols=" + symbol
-	var bearer = "Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE1NzI0MjU4MzUsInRva2VuIjoieW44emJxQWdOMUM1UGJ1TlpmVG9NZVNvRlZCQXFIIiwidXNlcl9pZCI6ImFkNTk3OTFiLWZkMTAtNDJiOS1hYmI2LWQ4Mzc1MWEwZjI1YiIsImRldmljZV9oYXNoIjoiMDFlMGZhMGNjMDhmNDAxMTNkMmZlNzcxMTVmMGIyNzciLCJzY29wZSI6ImludGVybmFsIiwidXNlcl9vcmlnaW4iOiJVUyIsIm9wdGlvbnMiOmZhbHNlLCJsZXZlbDJfYWNjZXNzIjpmYWxzZX0.Bh7_cHEKi5LRDlXsziMA0SaBZ6hzqXbu3u3FU2ntvhVjlRomDnc438PQZDWwmV9G_QvS6d7B1YtlCyVNS938fUFcE_n4D6PnEBA573428dpAqjKu_gbWhxYsezwxr2cZFVJHvTrQI4xY4223ds2A3iOAeG7eLf1ajByELvX_CPIgnV_ecRSxYlAhBCl4aCebzeWvDTs97CwqpM0aQL5oTbsxzU2HWSi1kH9dxnj15uMP0BeTEtcqRpRSpuCGT92kA6I7zRfsIuiUZpiDhZLQZxeQI7dVc5DasIp-sWKd2p0vtf6nplWtw8AaAJKQ-2HyhHdYqYLProVpwsHTFKBJ3w"
+	var bearer = "Bearer " + ""
 	oldPrice := 0.0
 	orignalPrice := 0.0
 
