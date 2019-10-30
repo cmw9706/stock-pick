@@ -2,9 +2,10 @@ package models
 
 //Transaction model that is uses to store data about purchases and sales of stock
 type Transaction struct {
+	ID     string          `json:"id"`
 	Symbol string          `json:"symbol"`
 	Type   TransactionType `json:"type"`
-	Price  float32         `json:"price"`
+	Price  float64         `json:"price"`
 }
 
 // TransactionType defines available storage types
